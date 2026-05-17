@@ -21,6 +21,17 @@ export interface StripePaymentIntentParams {
 export const createPaymentIntent = async (
   params: StripePaymentIntentParams
 ): Promise<any> => {
+  if (!stripeSecretKey) {
+    console.log('Mocking Stripe payment intent due to missing STRIPE_SECRET_KEY');
+    return {
+      id: `pi_mock_${Date.now()}`,
+      client_secret: `pi_mock_${Date.now()}_secret_${Date.now()}`,
+      amount: params.amount,
+      currency: params.currency.toLowerCase(),
+      status: 'requires_payment_method',
+    };
+  }
+
   const intent = await stripe.paymentIntents.create({
     amount: params.amount,
     currency: params.currency.toLowerCase(),
